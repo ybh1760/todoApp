@@ -5,23 +5,49 @@ import {
   View,
   StatusBar,
   TextInput,
-  Dimensions
+  Dimensions,
+  ScrollView
 } from "react-native";
+
+import ToDo from "./components/Todo";
 
 const { width, height } = Dimensions.get("window");
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      newTodo: ""
+    };
+  }
   render() {
+    const { newTodo } = this.state;
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         <Text style={styles.title}>ToDo List</Text>
         <View style={styles.card}>
-          <TextInput style={styles.input} placeholder="input todos" />
+          <TextInput
+            style={styles.input}
+            placeholder="input todos"
+            value={newTodo}
+            onChangeText={this._changeText}
+            placeholderTextColor={"#999"}
+            returnKeyType={"done"}
+            autoCorrect={false}
+          />
+          <ScrollView>
+            <ToDo />
+          </ScrollView>
         </View>
       </View>
     );
   }
+  _changeText = Text => {
+    this.setState({
+      newTodo: Text
+    });
+  };
 }
 
 const styles = StyleSheet.create({
@@ -46,6 +72,9 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   input: {
-    width
+    fontSize: 20,
+    padding: 20,
+    borderBottomColor: "#bbb",
+    borderBottomWidth: 1
   }
 });
