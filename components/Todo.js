@@ -4,29 +4,77 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Dimensions
+  Dimensions,
+  TextInput
 } from "react-native";
-import { AuthSession } from "expo";
 
 const { width, height } = Dimensions.get("window");
 
 export default class ToDo extends Component {
   state = {
+    isEditing: false,
     isCompleted: false
   };
   render() {
-    const { isCompleted } = this.state;
+    const { isCompleted, isEditing, toDoValue = "" } = this.state;
+    const { text } = this.props;
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={this._toggleComplete}>
-          <View
-            style={[
-              styles.circle,
-              isCompleted ? styles.compeletedCircle : styles.uncompletedCircle
-            ]}
-          />
-        </TouchableOpacity>
-        <Text style={[styles.text]}>Hello I'm a To Do</Text>
+        <View style={styles.column}>
+          <TouchableOpacity onPress={this._toggleComplete}>
+            <View
+              style={[
+                styles.circle,
+                isCompleted ? styles.completedCircle : styles.uncompletedCircle
+              ]}
+            />
+          </TouchableOpacity>
+          {isEditing ? (
+            <TextInput
+              style={[
+                styles.text,
+                styles.input,
+                isCompleted ? styles.completedText : styles.uncompletedText
+              ]}
+              value={toDoValue}
+              multiline={true}
+              onChangeText={this._changeTodo}
+              onBlur={this._finishEdit}
+              returnKeyType={"done"}
+            />
+          ) : (
+            <Text
+              style={[
+                styles.text,
+                isCompleted ? styles.completedText : styles.uncompletedText
+              ]}
+            >
+              {text}
+            </Text>
+          )}
+        </View>
+        {isEditing ? (
+          <View style={styles.action}>
+            <TouchableOpacity onPress={this._finishEdit}>
+              <View style={styles.actionContainer}>
+                <Text style={styles.actionText}>✅</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.action}>
+            <TouchableOpacity onPress={this._startEdit}>
+              <View style={styles.actionContainer}>
+                <Text style={styles.actionText}>✏️</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.actionContainer}>
+                <Text style={styles.actionText}>❌</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   }
@@ -37,31 +85,72 @@ export default class ToDo extends Component {
       };
     });
   };
+  _startEdit = () => {
+    const { text } = this.props;
+    this.setState({
+      toDoValue: text,
+      isEditing: true
+    });
+  };
+  _finishEdit = () => {
+    this.setState({
+      isEditing: false
+    });
+  };
+  _changeTodo = text => {
+    this.setState({
+      toDoValue: text
+    });
+  };
 }
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     width: width - 50,
     borderBottomColor: "#bbb",
     borderBottomWidth: StyleSheet.hairlineWidth
   },
+  column: {
+    flexDirection: "row",
+    width: width / 2,
+    alignItems: "center"
+  },
   circle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     borderWidth: 3,
-    marginRight: 10,
+    marginRight: 8,
+    marginLeft: 2,
     marginVertical: 20
+  },
+  completedCircle: {
+    borderColor: "#bbb"
+  },
+  uncompletedCircle: {
+    borderColor: "#F23657"
   },
   text: {
     fontSize: 20,
     marginVertical: 20
   },
-  compeletedCircle: {
-    borderColor: "#bbb"
+  completedText: {
+    textDecorationLine: "line-through",
+    color: "#bbb"
   },
-  uncompletedCircle: {
-    borderColor: "#F23657"
+  uncompletedText: {
+    color: "#353839"
+  },
+  action: {
+    flexDirection: "row"
+  },
+  actionContainer: {
+    margin: 10
+  },
+  input: {
+    width: width / 2,
+    marginVertical: 10
   }
 });

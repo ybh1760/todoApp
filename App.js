@@ -37,7 +37,7 @@ export default class App extends Component {
             autoCorrect={false}
           />
           <ScrollView contentContainerStyle={styles.toDos}>
-            <ToDo />
+            <ToDo text="create new todos" />
           </ScrollView>
         </View>
       </View>
