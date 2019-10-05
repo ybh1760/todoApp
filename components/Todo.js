@@ -7,14 +7,22 @@ import {
   Dimensions,
   TextInput
 } from "react-native";
+import PropTypes from "prop-types";
 
 const { width, height } = Dimensions.get("window");
 
 export default class ToDo extends Component {
-  state = {
-    isEditing: false,
-    isCompleted: false
+  constructor(props) {
+    super(props);
+    this.state = {
+      isEditing: false,
+      isCompleted: false
+    };
+  }
+  static propTypes = {
+    text: PropTypes.string.isRequired
   };
+
   render() {
     const { isCompleted, isEditing, toDoValue = "" } = this.state;
     const { text } = this.props;
@@ -55,7 +63,7 @@ export default class ToDo extends Component {
         </View>
         {isEditing ? (
           <View style={styles.action}>
-            <TouchableOpacity onPress={this._finishEdit}>
+            <TouchableOpacity onPressOut={this._finishEdit}>
               <View style={styles.actionContainer}>
                 <Text style={styles.actionText}>✅</Text>
               </View>
@@ -63,7 +71,7 @@ export default class ToDo extends Component {
           </View>
         ) : (
           <View style={styles.action}>
-            <TouchableOpacity onPress={this._startEdit}>
+            <TouchableOpacity onPressOut={this._startEdit}>
               <View style={styles.actionContainer}>
                 <Text style={styles.actionText}>✏️</Text>
               </View>
