@@ -9,6 +9,7 @@ import {
   ScrollView
 } from "react-native";
 import { AppLoading } from "expo";
+import uuidv1 from "uuid/v1";
 import ToDo from "./components/Todo";
 
 const { width, height } = Dimensions.get("window");
@@ -18,14 +19,14 @@ export default class App extends Component {
     super(props);
     this.state = {
       loadedToDos: false,
-      newTodo: ""
+      newToDo: ""
     };
   }
   componentDidMount = () => {
     this._loadToDos();
   };
   render() {
-    const { newTodo, loadedToDos } = this.state;
+    const { newToDo, loadedToDos } = this.state;
     if (!loadedToDos) return <AppLoading />;
     return (
       <View style={styles.container}>
@@ -35,11 +36,12 @@ export default class App extends Component {
           <TextInput
             style={styles.input}
             placeholder="input todos"
-            value={newTodo}
+            value={newToDo}
             onChangeText={this._changeText}
             placeholderTextColor={"#999"}
-            returnKeyType={"done"}
+            returnKeyLabel={"done"}
             autoCorrect={false}
+            onSubmitEditing={this._addToDo}
           />
           <ScrollView contentContainerStyle={styles.toDos}>
             <ToDo text="create new todos" />
@@ -50,13 +52,38 @@ export default class App extends Component {
   }
   _changeText = Text => {
     this.setState({
-      newTodo: Text
+      newToDo: Text
     });
   };
   _loadToDos = () => {
     this.setState({
       loadedToDos: true
     });
+  };
+  _addToDo = () => {
+    const { newToDo } = this.state;
+    if (newToDo !== "") {
+      this.setState(prevState => {
+        const ID = uuidv1();
+        const newToDoObject = {
+          [ID]: {
+            id: ID,
+            isCompleted: false,
+            text: newToDo,
+            createdAt: Date.now()
+          }
+        };
+        const newState = {
+          ...prevState,
+          newToDo: "",
+          toDos: {
+            ...prevState.toDos,
+            ...newToDoObject
+          }
+        };
+        return { ...newState };
+      });
+    }
   };
 }
 
