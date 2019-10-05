@@ -16,16 +16,20 @@ export default class ToDo extends Component {
     super(props);
     this.state = {
       isEditing: false,
-      isCompleted: false
+      isCompleted: false,
+      toDoValue: props.text
     };
   }
   static propTypes = {
-    text: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
+    isCompleted: PropTypes.bool.isRequired,
+    deleteToDo: PropTypes.func.isRequired
   };
 
   render() {
-    const { isCompleted, isEditing, toDoValue = "" } = this.state;
-    const { text } = this.props;
+    const { isCompleted, isEditing, toDoValue } = this.state;
+    const { id, text, deleteToDo } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.column}>
@@ -76,7 +80,7 @@ export default class ToDo extends Component {
                 <Text style={styles.actionText}>✏️</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPressOut={() => deleteToDo(id)}>
               <View style={styles.actionContainer}>
                 <Text style={styles.actionText}>❌</Text>
               </View>
@@ -159,6 +163,6 @@ const styles = StyleSheet.create({
   },
   input: {
     width: width / 2,
-    marginVertical: 10
+    marginVertical: 20
   }
 });

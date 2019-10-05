@@ -19,14 +19,15 @@ export default class App extends Component {
     super(props);
     this.state = {
       loadedToDos: false,
-      newToDo: ""
+      newToDo: "",
+      toDos: {}
     };
   }
   componentDidMount = () => {
     this._loadToDos();
   };
   render() {
-    const { newToDo, loadedToDos } = this.state;
+    const { newToDo, loadedToDos, toDos } = this.state;
     if (!loadedToDos) return <AppLoading />;
     return (
       <View style={styles.container}>
@@ -44,7 +45,9 @@ export default class App extends Component {
             onSubmitEditing={this._addToDo}
           />
           <ScrollView contentContainerStyle={styles.toDos}>
-            <ToDo text="create new todos" />
+            {Object.values(toDos).map(todo => (
+              <ToDo key={todo.id} deleteToDo={this._deleteToDo} {...todo} />
+            ))}
           </ScrollView>
         </View>
       </View>
@@ -85,11 +88,22 @@ export default class App extends Component {
       });
     }
   };
+  _deleteToDo = id => {
+    this.setState(prevState => {
+      const toDos = prevState.toDos;
+      delete toDos[id];
+      const newState = {
+        ...prevState,
+        ...toDos
+      };
+      return newState;
+    });
+  };
 }
 
 const styles = StyleSheet.create({
   scroll: {
-    flex: 1
+    height
   },
   container: {
     flex: 1,
