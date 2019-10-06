@@ -53,6 +53,7 @@ export default class App extends Component {
                 deleteToDo={this._deleteToDo}
                 completedToDo={this._completedToDo}
                 uncompletedToDo={this._uncompletedToDo}
+                updateToDo={this.updateToDo}
                 {...todo}
               />
             ))}
@@ -137,6 +138,22 @@ export default class App extends Component {
           [id]: {
             ...prevState.toDos[id],
             isCompleted: false
+          }
+        }
+      };
+      return { ...newState };
+    });
+  };
+
+  updateToDo = (id, text) => {
+    this.setState(prevState => {
+      const newState = {
+        ...prevState,
+        toDos: {
+          ...prevState.toDos,
+          [id]: {
+            ...prevState.toDos[id],
+            text: text
           }
         }
       };
