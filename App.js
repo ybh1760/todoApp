@@ -23,9 +23,11 @@ export default class App extends Component {
       toDos: {}
     };
   }
+
   componentDidMount = () => {
     this._loadToDos();
   };
+
   render() {
     const { newToDo, loadedToDos, toDos } = this.state;
     if (!loadedToDos) return <AppLoading />;
@@ -46,23 +48,32 @@ export default class App extends Component {
           />
           <ScrollView contentContainerStyle={styles.toDos}>
             {Object.values(toDos).map(todo => (
-              <ToDo key={todo.id} deleteToDo={this._deleteToDo} {...todo} />
+              <ToDo
+                key={todo.id}
+                deleteToDo={this._deleteToDo}
+                completedToDo={this._completedToDo}
+                uncompletedToDo={this._uncompletedToDo}
+                {...todo}
+              />
             ))}
           </ScrollView>
         </View>
       </View>
     );
   }
+
   _changeText = Text => {
     this.setState({
       newToDo: Text
     });
   };
+
   _loadToDos = () => {
     this.setState({
       loadedToDos: true
     });
   };
+
   _addToDo = () => {
     const { newToDo } = this.state;
     if (newToDo !== "") {
@@ -88,6 +99,7 @@ export default class App extends Component {
       });
     }
   };
+
   _deleteToDo = id => {
     this.setState(prevState => {
       const toDos = prevState.toDos;
@@ -99,12 +111,41 @@ export default class App extends Component {
       return newState;
     });
   };
+
+  _completedToDo = id => {
+    this.setState(prevState => {
+      const newState = {
+        ...prevState,
+        toDos: {
+          ...prevState.toDos,
+          [id]: {
+            ...prevState.toDos[id],
+            isCompleted: true
+          }
+        }
+      };
+      return { ...newState };
+    });
+  };
+
+  _uncompletedToDo = id => {
+    this.setState(prevState => {
+      const newState = {
+        ...prevState,
+        toDos: {
+          ...prevState.toDos,
+          [id]: {
+            ...prevState.toDos[id],
+            isCompleted: false
+          }
+        }
+      };
+      return { ...newState };
+    });
+  };
 }
 
 const styles = StyleSheet.create({
-  scroll: {
-    height
-  },
   container: {
     flex: 1,
     backgroundColor: "#F23657",

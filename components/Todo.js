@@ -16,20 +16,22 @@ export default class ToDo extends Component {
     super(props);
     this.state = {
       isEditing: false,
-      isCompleted: false,
       toDoValue: props.text
     };
   }
+
   static propTypes = {
     id: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
     isCompleted: PropTypes.bool.isRequired,
-    deleteToDo: PropTypes.func.isRequired
+    deleteToDo: PropTypes.func.isRequired,
+    completedToDo: PropTypes.func.isRequired,
+    uncompletedToDo: PropTypes.func.isRequired
   };
 
   render() {
-    const { isCompleted, isEditing, toDoValue } = this.state;
-    const { id, text, deleteToDo } = this.props;
+    const { isEditing, toDoValue } = this.state;
+    const { id, text, deleteToDo, isCompleted } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.column}>
@@ -90,31 +92,38 @@ export default class ToDo extends Component {
       </View>
     );
   }
+
   _toggleComplete = () => {
-    this.setState(prevState => {
-      return {
-        isCompleted: !prevState.isCompleted
-      };
-    });
+    const { isCompleted, completedToDo, uncompletedToDo, id } = this.props;
+    if (isCompleted) {
+      uncompletedToDo(id);
+    } else {
+      completedToDo(id);
+    }
   };
+
   _startEdit = () => {
     const { text } = this.props;
+
     this.setState({
       toDoValue: text,
       isEditing: true
     });
   };
+
   _finishEdit = () => {
     this.setState({
       isEditing: false
     });
   };
+
   _changeTodo = text => {
     this.setState({
       toDoValue: text
     });
   };
 }
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
